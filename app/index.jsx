@@ -1,16 +1,40 @@
-import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import MyBG from '../components/myBG'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function index() {
   let passRef = useRef(null);
   let[userName,setUserName] = useState('');
   let[pass,setPass] = useState('');
-  useEffect(async()=>{
-      
-  },[])
-  function checkUser(){
+  let[myUserName,setMyUserName] = useState('');
+  let[myPass,setMyPass] = useState('');
 
+  async function loadDetails() {
+    let uname = await AsyncStorage.getItem('userName');
+    let pas = await AsyncStorage.getItem('password');
+    if(!uname || !pas){
+      await AsyncStorage.setItem('userName',"Kinneret");
+      await AsyncStorage.setItem('password',"1234");
+    }
+    setUserName(uname);
+    setPass(pas);
+  }
+
+  useEffect(()=>{
+    loadDetails();
+  },[])
+
+  function checkUser(){
+      if(userName == myUserName && pass == myPass){
+        console.log("kkk");
+      }
+      else{
+        Alert.alert("שם משתמש או סיסמא שגויים")
+      }
+      Keyboard.dismiss();
+      setMyUserName('');
+      setMyPass('');
   }
   return (
     <MyBG>
@@ -18,9 +42,9 @@ export default function index() {
         <KeyboardAvoidingView style={{flex:1,justifyContent:"center",alignItems:"center"}} behavior={Platform.OS=='ios'?'padding':'height'}>
       <View style={styles.card}> 
         <Text style={styles.txt}>כניסה</Text>
-        <TextInput returnKeyType='next' onSubmitEditing={()=>passRef.current.focus()} style={styles.input} placeholder='שם משתמש' />
-        <TextInput secureTextEntry ref={passRef} style={styles.input} placeholder='סיסמא' />
-        <TouchableOpacity style={styles.btn}>
+        <TextInput value={myUserName} onChangeText={setMyUserName} returnKeyType='next' onSubmitEditing={()=>passRef.current.focus()} style={styles.input} placeholder='שם משתמש' />
+        <TextInput value={myPass} onChangeText={setMyPass} onSubmitEditing={checkUser} secureTextEntry ref={passRef} style={styles.input} placeholder='סיסמא' />
+        <TouchableOpacity onPress={checkUser} style={styles.btn}>
           <Text style={{color:"white"}}>התחבר</Text>
         </TouchableOpacity>
       </View>
