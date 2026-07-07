@@ -29,7 +29,7 @@ export default function index() {
 
   function checkUser(){
       if(userName == myUserName && pass == myPass){
-        router.replace('/presence');
+        router.push('/presence');
       }
       else{
         Alert.alert("שם משתמש או סיסמא שגויים")
