@@ -2,6 +2,7 @@ import { Alert, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, Text
 import React, { useEffect, useRef, useState } from 'react'
 import MyBG from '../components/myBG'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 export default function index() {
   let passRef = useRef(null);
@@ -9,6 +10,7 @@ export default function index() {
   let[pass,setPass] = useState('');
   let[myUserName,setMyUserName] = useState('');
   let[myPass,setMyPass] = useState('');
+  let router = useRouter();
 
   async function loadDetails() {
     let uname = await AsyncStorage.getItem('userName');
@@ -27,7 +29,7 @@ export default function index() {
 
   function checkUser(){
       if(userName == myUserName && pass == myPass){
-        console.log("kkk");
+        router.replace('/presence');
       }
       else{
         Alert.alert("שם משתמש או סיסמא שגויים")
